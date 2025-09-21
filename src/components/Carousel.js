@@ -16,16 +16,18 @@ export default function Carousel({ title, type, similar, show }) {
     setTrendingType(newType);
   };
 
+  // Calculate slidesToShow dynamically
   const calculateSlidesToShow = useCallback(() => {
     const width = window.innerWidth;
-    if (width <= 480) return 2;
-    if (width <= 768) return 2;
-    if (width <= 1024) return 3;
-    if (width <= 1280) return 4;
-    if (width <= 1536) return 5;
-    return 6;
+    if (width <= 480) return 2; // 1 slide for phones
+    if (width <= 768) return 2; // 2 slides for tablets
+    if (width <= 1024) return 3; // 3 slides for medium screens
+    if (width <= 1280) return 4; // 4 slides for large screens
+    if (width <= 1536) return 5; // 5 slides for extra-large screens
+    return 6; // 6 slides for very large screens
   }, []);
 
+  // Update slidesToShow on mount and resize
   useEffect(() => {
     const updateSlides = () => {
       setSlidesToShow(calculateSlidesToShow());
@@ -36,6 +38,7 @@ export default function Carousel({ title, type, similar, show }) {
     return () => window.removeEventListener('resize', updateSlides);
   }, [calculateSlidesToShow]);
 
+  // Fetch items
   useEffect(() => {
     const loadItems = async () => {
       try {
@@ -87,7 +90,7 @@ export default function Carousel({ title, type, similar, show }) {
     initialSlide: 0,
     autoplay: items.length > slidesToShow,
     autoplaySpeed: 3000,
-    centerMode: window.innerWidth <= 640,
+    centerMode: window.innerWidth > 480 && window.innerWidth <= 768, // Center mode only for tablet sizes
     centerPadding: '40px',
   };
 

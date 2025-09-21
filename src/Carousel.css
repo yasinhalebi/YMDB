@@ -1,0 +1,16 @@
+.slider-container .slick-slide {
+  padding: 0 8px;
+  box-sizing: border-box;
+}
+
+.slider-container .slick-slide > div {
+  width: 100%;
+}
+
+
+@media (max-width: 480px) {
+  .slider-container .slick-slide {
+    width: 100% !important;  
+    padding: 0 4px;  
+  }
+}
