@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
@@ -10,10 +10,31 @@ export default function Carousel({ title, type, similar, show }) {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [slidesToShow, setSlidesToShow] = useState(1);
 
   const handleTrendingClick = (newType) => {
     setTrendingType(newType);
   };
+
+  const calculateSlidesToShow = useCallback(() => {
+    const width = window.innerWidth;
+    if (width <= 480) return 2;
+    if (width <= 768) return 2;
+    if (width <= 1024) return 3;
+    if (width <= 1280) return 4;
+    if (width <= 1536) return 5;
+    return 6;
+  }, []);
+
+  useEffect(() => {
+    const updateSlides = () => {
+      setSlidesToShow(calculateSlidesToShow());
+    };
+
+    updateSlides();
+    window.addEventListener('resize', updateSlides);
+    return () => window.removeEventListener('resize', updateSlides);
+  }, [calculateSlidesToShow]);
 
   useEffect(() => {
     const loadItems = async () => {
@@ -23,7 +44,7 @@ export default function Carousel({ title, type, similar, show }) {
         let results = [];
 
         const mediaType = show?.media_type || trendingType;
-        
+
         if (similar && show?.id && show?.media_type) {
           results = await fetchSimilar(show.media_type, show.id);
         } else if (title === 'Top Rated') {
@@ -40,89 +61,34 @@ export default function Carousel({ title, type, similar, show }) {
         setLoading(false);
       }
     };
+
     if (similar && (!show?.id || !show?.media_type)) {
-      console.warn('Skipping similar fetch due to missing show data:', { 
-        showId: show?.id, 
+      console.warn('Skipping similar fetch due to missing show data:', {
+        showId: show?.id,
         mediaType: show?.media_type,
-        show: show 
+        show: show,
       });
       setItems([]);
       setLoading(false);
       setError(`Unable to load similar content. Missing required data: ${!show?.id ? 'ID' : ''} ${!show?.media_type ? 'Media Type' : ''}`);
       return;
     }
+
     loadItems();
   }, [title, trendingType, similar, show?.media_type, show?.id]);
 
+  // Carousel settings
   const settings = {
     dots: false,
-    infinite: items.length > 6,
+    infinite: items.length > slidesToShow,
     speed: 500,
-    slidesToShow: 6,
+    slidesToShow: slidesToShow,
     slidesToScroll: 1,
     initialSlide: 0,
-    autoplay: items.length > 6,
+    autoplay: items.length > slidesToShow,
     autoplaySpeed: 3000,
-    responsive: [
-      {
-        breakpoint: 1536, // 2xl
-        settings: {
-          slidesToShow: 5,
-          slidesToScroll: 1,
-          infinite: items.length > 5,
-          autoplay: items.length > 5
-        }
-      },
-      {
-        breakpoint: 1280, // xl
-        settings: {
-          slidesToShow: 4,
-          slidesToScroll: 1,
-          infinite: items.length > 4,
-          autoplay: items.length > 4
-        }
-      },
-      {
-        breakpoint: 1024, // lg
-        settings: {
-          slidesToShow: 3,
-          slidesToScroll: 1,
-          infinite: items.length > 3,
-          autoplay: items.length > 3
-        }
-      },
-      {
-        breakpoint: 768, // md
-        settings: {
-          slidesToShow: 2,
-          slidesToScroll: 1,
-          infinite: items.length > 2,
-          autoplay: items.length > 2
-        }
-      },
-      {
-        breakpoint: 640, // sm
-        settings: {
-          slidesToShow: 2,
-          slidesToScroll: 1,
-          centerMode: true,
-          centerPadding: '40px',
-          infinite: items.length > 2,
-          autoplay: items.length > 2
-        }
-      },
-      {
-        breakpoint: 480, // xs
-        settings: {
-          slidesToShow: 1,
-          slidesToScroll: 1,
-          centerMode: true,
-          centerPadding: '40px',
-          infinite: items.length > 1,
-          autoplay: items.length > 1
-        }
-      },
-    ],
+    centerMode: window.innerWidth <= 640,
+    centerPadding: '40px',
   };
 
   return (
