@@ -56,33 +56,71 @@ export default function Carousel({ title, type, similar, show }) {
 
   const settings = {
     dots: false,
-    infinite: items.length > 1,
+    infinite: items.length > 6,
     speed: 500,
-    slidesToShow: Math.min(items.length, 5) || 1,
+    slidesToShow: 6,
     slidesToScroll: 1,
     initialSlide: 0,
-    autoplay: items.length > 1,
+    autoplay: items.length > 6,
     autoplaySpeed: 3000,
     responsive: [
       {
-        breakpoint: 1536,
-        settings: { slidesToShow: Math.min(items.length, 4) || 1, slidesToScroll: 1, infinite: items.length > 1 },
+        breakpoint: 1536, // 2xl
+        settings: {
+          slidesToShow: 5,
+          slidesToScroll: 1,
+          infinite: items.length > 5,
+          autoplay: items.length > 5
+        }
       },
       {
-        breakpoint: 1280,
-        settings: { slidesToShow: Math.min(items.length, 3) || 1, slidesToScroll: 1, infinite: items.length > 1 },
+        breakpoint: 1280, // xl
+        settings: {
+          slidesToShow: 4,
+          slidesToScroll: 1,
+          infinite: items.length > 4,
+          autoplay: items.length > 4
+        }
       },
       {
-        breakpoint: 768,
-        settings: { slidesToShow: Math.min(items.length, 2) || 1, slidesToScroll: 1 },
+        breakpoint: 1024, // lg
+        settings: {
+          slidesToShow: 3,
+          slidesToScroll: 1,
+          infinite: items.length > 3,
+          autoplay: items.length > 3
+        }
       },
       {
-        breakpoint: 640,
-        settings: { slidesToShow: Math.min(items.length, 2) || 1, slidesToScroll: 1, centerMode: true, centerPadding: '40px' },
+        breakpoint: 768, // md
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 1,
+          infinite: items.length > 2,
+          autoplay: items.length > 2
+        }
       },
       {
-        breakpoint: 480,
-        settings: { slidesToShow: 2, slidesToScroll: 1, centerMode: true, centerPadding: '20px' },
+        breakpoint: 640, // sm
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 1,
+          centerMode: true,
+          centerPadding: '40px',
+          infinite: items.length > 2,
+          autoplay: items.length > 2
+        }
+      },
+      {
+        breakpoint: 480, // xs
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+          centerMode: true,
+          centerPadding: '40px',
+          infinite: items.length > 1,
+          autoplay: items.length > 1
+        }
       },
     ],
   };
